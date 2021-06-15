@@ -55,14 +55,13 @@ export const getTransactionGraph = async (r) => {
             { createdAt: { [Op.lte]: new Date(boundraryTimestamp) } },
           ],
         },
-        // logging: true,
+        logging: true,
       });
 
       if (getData.length !== 0) {
         dataArray.push(getData);
       }
     }
-    console.log(JSON.stringify({ data: dataArray.reverse() }));
     return output({ data: dataArray.reverse() });
   } catch (err) {
     console.log(err);
