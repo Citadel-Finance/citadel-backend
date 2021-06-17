@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Sequelize, Op } from 'sequelize';
 import { error, output } from '../../utils';
 import { Graph } from '../../models/Graph';
 
@@ -15,7 +15,7 @@ export const getTransactionGraph = async (r) => {
     const timestampNow = new Date().valueOf();
 
     let intervalsAmount: number;
-    let timeBetweenIntervals;
+    let timeBetweenIntervals: number;
 
     switch (startInterval.toUpperCase()) {
       case 'DAY':
@@ -30,7 +30,7 @@ export const getTransactionGraph = async (r) => {
 
       case 'ALL':
         intervalsAmount = 20;
-        timeBetweenIntervals = 3600 * 60 * 24 * 31 * 1000;
+        timeBetweenIntervals = 3600 * 24 * 31 * 1000;
         break;
 
       default:
@@ -41,27 +41,40 @@ export const getTransactionGraph = async (r) => {
     }
 
     let getData: any = [];
-    const dataArray = [];
+    let dataArray = [];
+    const msPerInterval = Math.floor((timestampNow - timeBetweenIntervals) / intervalsAmount);
 
-    for (let i = 1; i <= intervalsAmount; i++) {
-      const dataObject: any = {};
-      const boundraryTimestamp = timestampNow - (i - 1) * timeBetweenIntervals;
-      dataObject.timestamp = timestampNow - i * timeBetweenIntervals;
+    for (let interval = 1; interval <= intervalsAmount; interval++) {
       getData = await Graph.findAll({
-        attributes: [graphType, 'createdAt'],
-        where: {
-          [Op.and]: [
-            { createdAt: { [Op.gte]: new Date(dataObject.timestamp) } },
-            { createdAt: { [Op.lte]: new Date(boundraryTimestamp) } },
+        attributes: [
+          [
+            Sequelize.literal(
+              `round(extract(epoch from "createdAt" - '${new Date(
+                timeBetweenIntervals
+              ).toISOString()}'::date)/${(msPerInterval / 1000).toFixed(0)})`
+            ),
+            'points',
           ],
+          [Sequelize.literal(`avg("${graphType}")`), 'value'],
+        ],
+        where: {
+          createdAt: {
+            [Op.between]: [
+              timestampNow - timeBetweenIntervals * interval,
+              timestampNow - timeBetweenIntervals * (interval - 1),
+            ],
+          },
         },
-        logging: true,
+        group: ['points'],
+        // logging: true,
       });
 
       if (getData.length !== 0) {
-        dataArray.push(getData);
+        getData.push({ createdAt: new Date(timestampNow - timeBetweenIntervals * interval) });
+        dataArray.push(...getData);
       }
     }
+
     return output({ data: dataArray.reverse() });
   } catch (err) {
     console.log(err);

@@ -20,6 +20,9 @@ const Package = require('../../package.json'); // make import
 
 SwaggerOptions.info.version = Package.version;
 
+// Сделать через вместо totalDeposit в total-deposit
+// totalDeposit отвечать как value
+
 const init = async () => {
   try {
     const server = await new Hapi.Server({
@@ -72,7 +75,7 @@ const init = async () => {
     await initListener();
     server.log('info', `Server running at: ${server.info.uri}`);
 
-    const fet = await fetchContractData('allPools', Factory, process.env.ADDRESSFACTORY, []);
+    const fet = await fetchContractData('allPools', Factory, process.env.ADDRESS_FACTORY, []);
     fet.forEach((element) => {
       getTransactionInfo(element[0]);
     });
