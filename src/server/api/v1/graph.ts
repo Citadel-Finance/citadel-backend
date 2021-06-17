@@ -4,10 +4,16 @@ import { Graph } from '../../models/Graph';
 import { BigNumber } from 'bignumber.js';
 
 export const graphEnum = {
-  DEPOS: 'totalDeposited',
-  BORR: 'totalBorrowed',
-  PROF: 'totalProfit',
+  ['total-deposited']: 'totalDeposited',
+  ['total-borrowed']: 'totalBorrowed',
+  ['total-profit']: 'totalProfit',
 };
+
+export enum intervalEnum {
+  day,
+  week,
+  all,
+}
 
 export const getTransactionGraph = async (r) => {
   try {
@@ -47,7 +53,7 @@ export const getTransactionGraph = async (r) => {
     for (let interval = 1; interval <= intervalsAmount; interval++) {
       let mean = new BigNumber(0);
       getData = await Graph.findAll({
-        attributes: ['createdAt', [Sequelize.literal(`avg("${graphType}")`), 'value']],
+        attributes: ['createdAt', [Sequelize.literal(`avg("${graphEnum[graphType]}")`), 'value']],
         where: {
           createdAt: {
             [Op.between]: [

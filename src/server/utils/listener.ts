@@ -4,19 +4,39 @@ import { Pool } from './abis';
 import config from '../config/config';
 
 let web3Base: any;
+const options = {
+  reconnect: {
+    auto: true,
+    delay: 5000,
+    maxAttempts: 5,
+    onTimeout: false,
+  },
+};
 
 export const initListener = async () => {
-  const WSProvider = new Web3.providers.WebsocketProvider(config.providerURL);
+  const WSProvider = new Web3.providers.WebsocketProvider(config.providerURL, options);
   web3Base = new Web3(WSProvider);
 
   WSProvider.on('connect', async () => {
     console.log(`[WS]\tProvider connected!\n[WS]\tStarting listener...`);
   });
 
-  WSProvider.on('end', async () => {
+  function retry() {
     console.log(`[WS]\tProvider disconnected!\n[WS]\tRestarting listener...`);
     const newProviderConnection = new Web3.providers.WebsocketProvider(config.providerURL);
     web3Base = new Web3(newProviderConnection);
+  }
+
+  WSProvider.on('end', async () => {
+    retry();
+  });
+
+  WSProvider.on('close', async () => {
+    retry();
+  });
+
+  WSProvider.on('error', async () => {
+    retry();
   });
 
   web3Base.eth.subscribe('newBlockHeaders', (err, data) => {
