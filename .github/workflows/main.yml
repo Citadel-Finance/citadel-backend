@@ -57,7 +57,7 @@ jobs:
           chmod 700 ci-scripts
           cd ci-scripts
           ansible-playbook -i "${{ secrets.REMOTE_HOST }}" -e "ansible_user=${{ secrets.REMOTE_USER }} \
-            DB_LINK=${{ secrets.DEVELOP_DB_LINK }} \
+            DB_LINK=${{ secrets.DB_LINK }} \
             INFURA=${{ secrets.INFURA_TESTNET }} \
             JWT_ACCESS_SECRET=${{ secrets.DEVELOP_JWT_ACCESS_SECRET }} \
             JWT_REFRESH_SECRET=${{ secrets.DEVELOP_JWT_REFRESH_SECRET }} \
