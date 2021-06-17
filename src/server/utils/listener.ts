@@ -7,7 +7,7 @@ let web3Base: any;
 const options = {
   reconnect: {
     auto: true,
-    delay: 5000, //ms
+    delay: 5000, //mss
     maxAttempts: 5,
     onTimeout: false,
   },
