@@ -1,6 +1,7 @@
 import { Sequelize, Op } from 'sequelize';
 import { error, output } from '../../utils';
 import { Graph } from '../../models/Graph';
+import { BigNumber } from 'bignumber.js';
 
 export const graphEnum = {
   DEPOS: 'totalDeposited',
@@ -42,21 +43,11 @@ export const getTransactionGraph = async (r) => {
 
     let getData: any = [];
     let dataArray = [];
-    const msPerInterval = Math.floor((timestampNow - timeBetweenIntervals) / intervalsAmount);
 
     for (let interval = 1; interval <= intervalsAmount; interval++) {
+      let mean = new BigNumber(0);
       getData = await Graph.findAll({
-        attributes: [
-          [
-            Sequelize.literal(
-              `round(extract(epoch from "createdAt" - '${new Date(
-                timeBetweenIntervals
-              ).toISOString()}'::date)/${(msPerInterval / 1000).toFixed(0)})`
-            ),
-            'points',
-          ],
-          [Sequelize.literal(`avg("${graphType}")`), 'value'],
-        ],
+        attributes: ['createdAt', [Sequelize.literal(`avg("${graphType}")`), 'value']],
         where: {
           createdAt: {
             [Op.between]: [
@@ -65,14 +56,21 @@ export const getTransactionGraph = async (r) => {
             ],
           },
         },
-        group: ['points'],
-        // logging: true,
+        group: ['createdAt'],
+        raw: true,
       });
 
-      if (getData.length !== 0) {
-        getData.push({ createdAt: new Date(timestampNow - timeBetweenIntervals * interval) });
-        dataArray.push(...getData);
+      for (let record of getData) {
+        if (record.value) {
+          mean = mean.plus(new BigNumber(record.value));
+        }
       }
+
+      let dataForPeriod = {
+        value: mean.toString(),
+        createdAt: new Date(timestampNow - timeBetweenIntervals * interval),
+      };
+      dataArray.push(dataForPeriod);
     }
 
     return output({ data: dataArray.reverse() });
