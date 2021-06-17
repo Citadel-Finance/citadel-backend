@@ -4,7 +4,6 @@ import * as Inert from '@hapi/inert';
 import * as Vision from '@hapi/vision';
 import * as HapiCors from 'hapi-cors';
 import * as HapiPulse from 'hapi-pulse';
-// import * as HapiSwagger from 'hapi-swagger';
 import * as Qs from 'qs';
 import routes from './routes';
 import config from './config/config';
@@ -15,13 +14,10 @@ import { fetchContractData, initListener, getTransactionInfo } from './utils/lis
 import { Factory } from './utils/abis';
 import initDatabase from './models';
 
-const HapiSwagger = require('hapi-swagger'); // make import
-const Package = require('../../package.json'); // make import
+const HapiSwagger = require('hapi-swagger');
+const Package = require('../../package.json');
 
 SwaggerOptions.info.version = Package.version;
-
-// Сделать через вместо totalDeposit в total-deposit
-// totalDeposit отвечать как value
 
 const init = async () => {
   try {
