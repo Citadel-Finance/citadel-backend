@@ -5,7 +5,7 @@ import { outputArraySchema } from '../../schemes';
 export default [
   {
     method: 'GET',
-    path: '/v1/graph/{graph}/{interval}',
+    path: '/v1/graph/{pool}/{graph}/{interval}',
     handler: getTransactionGraph,
     options: {
       id: 'v1.user.getTransactionGraph',
@@ -14,7 +14,8 @@ export default [
       tags: ['api', 'v1', 'user', 'graph'],
       validate: {
         params: Joi.object({
-          graph: Joi.string().min(12).max(15).required(),
+          pool: Joi.string().min(42).max(42).required(),
+          graph: Joi.valid(...Object.values(graphEnum)),
           interval: Joi.valid(...Object.values(intervalEnum)),
         }),
         failAction: (req, h, err) =>

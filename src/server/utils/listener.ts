@@ -7,7 +7,7 @@ let web3Base: any;
 const options = {
   reconnect: {
     auto: true,
-    delay: 5000, //mss
+    delay: 5000, //ms
     maxAttempts: 5,
     onTimeout: false,
   },
@@ -70,18 +70,28 @@ export const getTransactionInfo = async (address) => {
       filter: {},
     },
     async (e, r) => {
-      const { totalDeposited, totalBorrowed, totalProfit } = r.returnValues;
+      const {
+        totalDeposited: deposited,
+        totalBorrowed: borrowed,
+        totalProfit: profit,
+      } = r.returnValues;
 
-      console.log('totalDeposited:\t', totalDeposited);
-      console.log('totalBorrowed:\t', totalBorrowed);
-      console.log('totalProfit:\t', totalProfit, '\n');
+      const { address: pool } = r;
+
+      console.log('deposited:\t', deposited);
+      console.log('borrowed:\t', borrowed);
+      console.log('profit:\t\t', profit);
+      console.log('pool:\t\t', pool, '\tlength = ', pool.length, '\n');
 
       await Graph.create({
-        totalDeposited,
-        totalBorrowed,
-        totalProfit,
+        deposited,
+        borrowed,
+        profit,
+        pool,
       });
-      console.log(e);
+      if (e) {
+        throw e;
+      }
     }
   );
 };

@@ -3,11 +3,11 @@ import { error, output } from '../../utils';
 import { Graph } from '../../models/Graph';
 import { BigNumber } from 'bignumber.js';
 
-export const graphEnum = {
-  ['total-deposited']: 'totalDeposited',
-  ['total-borrowed']: 'totalBorrowed',
-  ['total-profit']: 'totalProfit',
-};
+export enum graphEnum {
+  deposited,
+  borrowed,
+  profit,
+}
 
 export enum intervalEnum {
   day,
@@ -17,9 +17,12 @@ export enum intervalEnum {
 
 export const getTransactionGraph = async (r) => {
   try {
+    const poolAddress: string = r.params.pool;
     const graphType: string = r.params.graph;
     const startInterval: string = r.params.interval;
     const timestampNow = new Date().valueOf();
+
+    console.log(poolAddress, ' ', graphType, ' ', startInterval);
 
     let intervalsAmount: number;
     let timeBetweenIntervals: number;
@@ -53,7 +56,7 @@ export const getTransactionGraph = async (r) => {
     for (let interval = 1; interval <= intervalsAmount; interval++) {
       let mean = new BigNumber(0);
       getData = await Graph.findAll({
-        attributes: ['createdAt', [Sequelize.literal(`avg("${graphEnum[graphType]}")`), 'value']],
+        attributes: [[Sequelize.literal(`ROUND(AVG("${graphType}"), 0)`), 'value']],
         where: {
           createdAt: {
             [Op.between]: [
@@ -61,8 +64,8 @@ export const getTransactionGraph = async (r) => {
               timestampNow - timeBetweenIntervals * (interval - 1),
             ],
           },
+          pool: poolAddress,
         },
-        group: ['createdAt'],
         raw: true,
       });
 

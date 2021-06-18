@@ -27,5 +27,5 @@ export default {
       ? JSON.parse(process.env.CORS_EXPOSE_HEADERS)
       : ['content-type', 'content-length'],
   },
-  providerURL: `wss://bsc.getblock.io/testnet/?api_key=${process.env.API_KEY}`,
+  providerURL: process.env.API_KEY,
 };
