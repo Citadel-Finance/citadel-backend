@@ -69,7 +69,7 @@ jobs:
             IS_MAINNET=${{ secrets.IS_MAINNET }} \
             SRC_DIR=${{ github.workspace }}/" backend-update.yml;
 
-#
+
 #deploy-master:
 #  if: github.ref == 'refs/heads/master' && contains(github.event.head_commit.message, '[update]')
 #  runs-on: ubuntu-latest
