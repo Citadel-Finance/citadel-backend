@@ -13,6 +13,12 @@ const options = {
   },
 };
 
+const retry = () => {
+  console.log(`[WS]\tProvider disconnected!\n[WS]\tRestarting listener...`);
+  const newProviderConnection = new Web3.providers.WebsocketProvider(config.providerURL);
+  web3Base = new Web3(newProviderConnection);
+};
+
 export const initListener = async () => {
   const WSProvider = new Web3.providers.WebsocketProvider(config.providerURL, options);
   web3Base = new Web3(WSProvider);
@@ -20,12 +26,6 @@ export const initListener = async () => {
   WSProvider.on('connect', async () => {
     console.log(`[WS]\tProvider connected!\n[WS]\tStarting listener...`);
   });
-
-  function retry() {
-    console.log(`[WS]\tProvider disconnected!\n[WS]\tRestarting listener...`);
-    const newProviderConnection = new Web3.providers.WebsocketProvider(config.providerURL);
-    web3Base = new Web3(newProviderConnection);
-  }
 
   WSProvider.on('end', async () => {
     retry();

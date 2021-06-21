@@ -8,8 +8,7 @@ export default {
   info: {
     title: 'API Documentation',
     version: '',
-    description:
-      'API Documentation\n\nYou can use https://mdenushev.github.io/nes-cli/ to test ws connections',
+    description: 'API Documentation\n\n',
   },
   securityDefinitions: {
     Bearer: {
@@ -22,7 +21,7 @@ export default {
   security: [
     {
       Bearer: [],
-    }
+    },
   ],
   jsonPath: '/documentation.json',
   documentationPath: '/documentation',
