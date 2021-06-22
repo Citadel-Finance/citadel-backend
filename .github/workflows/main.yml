@@ -65,10 +65,10 @@ jobs:
             SERVER_PORT=${{ secrets.SERVER_PORT }} \
             SERVER_SHUTDOWN_TIMEOUT=${{ secrets.SERVER_SHUTDOWN_TIMEOUT }} \
             API_KEY=${{ secrets.API_KEY }} \
+            LOCAL=${{ secrets.LOCAL }} \
             ADDRESS_FACTORY=${{ secrets.ADDRESS_FACTORY }} \
             IS_MAINNET=${{ secrets.IS_MAINNET }} \
             SRC_DIR=${{ github.workspace }}/" backend-update.yml;
-
 
 #deploy-master:
 #  if: github.ref == 'refs/heads/master' && contains(github.event.head_commit.message, '[update]')
