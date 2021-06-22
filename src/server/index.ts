@@ -66,7 +66,7 @@ const init = async () => {
       options: config.cors,
     });
 
-    // Starting the server
+    // Starting the server.
     await server.start();
     await initListener();
     server.log('info', `Server running at: ${server.info.uri}`);
