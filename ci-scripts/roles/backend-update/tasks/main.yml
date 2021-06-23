@@ -46,7 +46,7 @@
  
 - name: Start backend process
   shell: pm2 start app.json
-  shell: pm2 start 3
+  shell: pm2 start all
   args:
     chdir: '{{ backend_bin }}'
 
