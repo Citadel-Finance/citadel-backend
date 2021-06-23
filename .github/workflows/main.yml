@@ -68,8 +68,6 @@ jobs:
             LOCAL=${{ secrets.LOCAL }} \
             ADDRESS_FACTORY=${{ secrets.ADDRESS_FACTORY }} \
             IS_MAINNET=${{ secrets.IS_MAINNET }} \
-            CORS_ORIGINS=${{ secrets.CORS_ORIGINS }} \
-            CORS_METHODS=${{ secrets.CORS_METHODS }} \
             SRC_DIR=${{ github.workspace }}/" backend-update.yml;
 
 #deploy-master:
