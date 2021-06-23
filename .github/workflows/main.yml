@@ -85,7 +85,7 @@ jobs:
 #        touch ~/.ssh/id_rsa
 #        chmod -R go= ~/.ssh
 #        chmod 600 ~/.ssh/id_rsa
-#        echo "${{ secrets.PROD_SERVER_SSH_KEY }}" >> ~/.ssh/id_rsa
+#        echo "${{ secrets.POD_SERVER_SSH_KEY }}" >> ~/.ssh/id_rsa
 #        sudo apt-add-repository -y -u ppa:ansible/ansible
 #        sudo apt-get install -y rsync
 #        sudo apt-get install -y ansible
