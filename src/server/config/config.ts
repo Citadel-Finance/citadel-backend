@@ -1,5 +1,8 @@
 import { config } from 'dotenv';
 
+const path = require('path');
+
+
 config();
 
 export default {
@@ -28,4 +31,5 @@ export default {
       : ['content-type', 'content-length'],
   },
   providerURL: process.env.API_KEY,
+  providerURL2: process.env.API_SPARE_KEY,
 };

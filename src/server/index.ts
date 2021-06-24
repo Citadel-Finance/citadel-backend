@@ -11,8 +11,8 @@ import { handleValidationError, responseHandler } from './utils';
 import SwaggerOptions from './config/swagger';
 import { pinoConfig } from './config/pino';
 import { fetchContractData, initListener, getTransactionInfo } from './utils/listener';
-import { Factory } from './utils/abis';
 import initDatabase from './models';
+import * as factory from './config/CitadelFactory.json'
 
 const HapiSwagger = require('hapi-swagger');
 const Package = require('../../package.json');
@@ -66,12 +66,12 @@ const init = async () => {
       options: config.cors,
     });
 
-    // Starting the server.
+    // Starting the server
     await server.start();
     await initListener();
     server.log('info', `Server running at: ${server.info.uri}`);
-
-    const fet = await fetchContractData('allPools', Factory, process.env.ADDRESS_FACTORY, []);
+    const fet = await fetchContractData('allPools', factory.abi, process.env.ADDRESS_FACTORY);
+    
     fet.forEach((element) => {
       getTransactionInfo(element[0]);
     });

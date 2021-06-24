@@ -1,5 +1,6 @@
 import * as Joi from 'joi';
 import { getTransactionGraph, graphEnum, intervalEnum } from '../../api/v1/graph';
+import { getfactory } from '../../api/v1/factory';
 import { outputArraySchema } from '../../schemes';
 
 export default [
@@ -29,5 +30,16 @@ export default [
         ),
       },
     },
+  },{
+    method: 'GET',
+    path: '/v1/getfactory',
+    handler: getfactory,
+    options: {
+      id: 'v1.getfactory',
+      auth: false,
+      description: 'This method returns an actual factory address.',
+      tags: ['api', 'v1', 'factory']
+    },
   },
+  
 ];
