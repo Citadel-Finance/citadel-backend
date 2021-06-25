@@ -10,7 +10,7 @@ import config from './config/config';
 import { handleValidationError, responseHandler } from './utils';
 import SwaggerOptions from './config/swagger';
 import { pinoConfig } from './config/pino';
-import { fetchContractData, initListener, getTransactionInfo } from './utils/listener';
+import { fetchContractData, initListener, subscribePoolHistoryEvent, subscribeNewPools } from './utils/listener';
 import initDatabase from './models';
 import * as factory from './config/CitadelFactory.json'
 
@@ -70,17 +70,20 @@ const init = async () => {
     await server.start();
     await initListener();
     server.log('info', `Server running at: ${server.info.uri}`);
-    const fet = await fetchContractData('allPools', factory.abi, process.env.ADDRESS_FACTORY);
+    const fet = await fetchContractData('allPools', factory.abi, process.env.ADDRESS_FACTORY, []);
     
     try{
-      fet.forEach((element) => {
-        console.log(element[0]);
-        getTransactionInfo(element[0]);
+      console.log('[INFO]\tlist of all tokens:');
+      fet.forEach((element, index) => {
+        console.log('(', index + 1, ')\t', element[1]); // show all tokens
+        subscribePoolHistoryEvent(element[0]);
       });
 
     } catch (e) {
       console.log('[ERROR] ', e);
     }
+    subscribeNewPools();
+    
     
 
     return server;

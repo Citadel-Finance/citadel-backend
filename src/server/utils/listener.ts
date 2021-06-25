@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import { Graph } from '../models/Graph';
 import config from '../config/config';
+import * as factory from './../config/CitadelFactory.json'
 import * as pool from './../config/CitadelPool.json'
 
 let web3Base: any;
@@ -15,7 +16,7 @@ const options = {
 
 const retry = () => {
   console.log(`[WS]\tProvider disconnected!\n[WS]\tRestarting listener...`);
-  const newProviderConnection = new Web3.providers.WebsocketProvider(config.providerURL);
+  const newProviderConnection = new Web3.providers.WebsocketProvider(config.providerURL, options);
   web3Base = new Web3(newProviderConnection);
 };
 
@@ -47,21 +48,12 @@ export const initListener = async () => {
   });
 };
 
-export const fetchContractData = async (
-  _method: string,
-  _abi: any,
-  _address: string,
-) => {
-  try {
-    const contract = new web3Base.eth.Contract(_abi, _address);
-    return await contract.methods.allPools().call();
-  } catch (e) {
-    console.log(e);
-  }
+export const fetchContractData = async (_method, _abi, _address, _params) => {
+  const contract = new web3Base.eth.Contract(_abi, _address);
+  return await contract.methods[_method].apply(this, _params).call();
 };
 
-export const getTransactionInfo = async (address) => {
-  //                                     Abi   Pool
+export const subscribePoolHistoryEvent = (address) => {
   const inst = new web3Base.eth.Contract(pool.abi, address);
   inst.events.totalHistory(
     {
@@ -69,6 +61,9 @@ export const getTransactionInfo = async (address) => {
       filter: {},
     },
     async (e, r) => {
+      if (e) {
+        console.log('ERROR ', e);
+      }
       const {
         totalDeposited: deposited,
         totalBorrowed: borrowed,
@@ -85,9 +80,27 @@ export const getTransactionInfo = async (address) => {
         profit,
         pool,
       });
+    }
+  );
+};
+
+export const subscribeNewPools = () => {
+
+  const inst = new web3Base.eth.Contract(factory.abi, process.env.ADDRESS_FACTORY);
+  inst.events.Created(
+    {
+      fromBlock: 'latest',
+      filter: {},
+    },
+    async (e, r) => {
       if (e) {
-        throw e;
+        console.log('ERROR ', e);
       }
+
+      const newPool = r.returnValues['pool'];
+      subscribePoolHistoryEvent(newPool);
+
+      console.log('[ADDED NEW POOL]\t', newPool);
     }
   );
 };
