@@ -77,7 +77,7 @@ export const getTransactionInfo = async (address) => {
 
       const { address: pool } = r;
 
-      console.log('deposited: ', deposited, '\tborrowed: ', borrowed, '\tprofit: ', profit, '\tpool: ', pool);
+      console.log('deposited:', deposited, '\tborrowed:', borrowed, '\tprofit:', profit, '\tpool:', pool);
 
       await Graph.create({
         deposited,
