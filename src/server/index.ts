@@ -72,14 +72,14 @@ const init = async () => {
     server.log('info', `Server running at: ${server.info.uri}`);
     const fet = await fetchContractData('allPools', factory.abi, process.env.ADDRESS_FACTORY);
     
-    if(fet.length !== 0) {
+    try{
       fet.forEach((element) => {
         console.log(element[0]);
         getTransactionInfo(element[0]);
       });
 
-    } else {
-      console.log("There are no pools.");
+    } catch (e) {
+      console.log('[ERROR] ', e);
     }
     
 
