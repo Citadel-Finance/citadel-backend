@@ -32,4 +32,5 @@ export default {
   },
   providerURL: process.env.API_KEY,
   providerURL2: process.env.API_SPARE_KEY,
+  
 };
